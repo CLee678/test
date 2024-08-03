@@ -89,9 +89,11 @@
         // Load GeoJSON from an external file
         $.getJSON("data/SurveyNeighborhoods.geojson", function (data) {
             neighborhoodLayer = L.geoJson(data, {
+                style: styleFunc,
                 onEachFeature: onEachFeatureFunc
             }).addTo(map);
         });
+
 
         function onEachFeatureFunc(chart, survey) {
             survey.on({
@@ -186,6 +188,32 @@
             map.fitBounds(e.target.getBounds().pad(1.5));
         }
 
+        // Set style function that sets fill color property equal to census tract      
+        function styleFunc(feature) {
+            return {
+                fillColor: setColorFunc(feature.properties.NOMBRE),
+                fillOpacity: 0.9,
+                weight: 1,
+                opacity: 1,
+                color: '#ffffff',
+                dashArray: '3'
+            };
+        }
+
+        // Set function for color ramp
+        function setColorFunc(name) {
+            return name = AMALIA MARIN ? '#cfe2f3' :
+                name = LOS MEROS ? '#fff2cc' :
+                name = LOS POTES ? '#a2c4c9' :
+                name = PLAYA ? '#d9d2e9' :
+                name = PUERTO VIEJO ? '#fce5cd' :
+                name = SALISTRAL / SECT  ? '#d9ead3' :
+                name = VILLA PESQUERA ? '#f9cb9c' :
+                name = VILLA TABAIBA ? '#fddbc7' :
+                name = VISTAS DEL MAR ? '#ead1dc';
+        }
+
+        
 
         // Add Scale Bar to Map
         L.control.scale({ position: 'bottomleft' }).addTo(map);
