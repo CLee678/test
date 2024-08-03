@@ -118,7 +118,7 @@
         var raceChart;
 
         // Load GeoJSON from an external file
-        $.getJSON("data/WGS84.geojson", function (data) {
+        $.getJSON("data/SECTORES_URB_COMUNIDADES.geojson", function (data) {
             censusTractLayer = L.geoJson(data, {
                 style: styleFunc,
                 onEachFeature: onEachFeatureFunc
