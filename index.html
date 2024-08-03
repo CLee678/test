@@ -200,20 +200,32 @@
             };
         }
 
-        // Set function for color ramp
-        function setColorFunc(name) {
-            return name = AMALIA MARIN ? '#cfe2f3' :
-                name = LOS MEROS ? '#fff2cc' :
-                name = LOS POTES ? '#a2c4c9' :
-                name = PLAYA ? '#d9d2e9' :
-                name = PUERTO VIEJO ? '#fce5cd' :
-                name = SALISTRAL / SECT  ? '#d9ead3' :
-                name = VILLA PESQUERA ? '#f9cb9c' :
-                name = VILLA TABAIBA ? '#fddbc7' :
-                name = VISTAS DEL MAR ? '#ead1dc';
-        }
 
-        
+        function setColorFunc(name) {
+            switch(name) {
+                case 'AMALIA MARIN':
+                    return '#cfe2f3';
+                case 'LOS MEROS':
+                    return '#fff2cc';
+                case 'LOS POTES':
+                    return '#a2c4c9';
+                case 'PLAYA':
+                    return '#d9d2e9';
+                case 'PUERTO VIEJO':
+                    return '#fce5cd';
+                case 'SALISTRAL / SECT':
+                    return '#d9ead3';
+                case 'VILLA PESQUERA':
+                    return '#f9cb9c';
+                case 'VILLA TABAIBA':
+                    return '#fddbc7';
+                case 'VISTAS DEL MAR':
+                    return '#ead1dc';
+                default:
+                    return '#ffffff'; // Default color if name does not match
+            }
+        }
+     
 
         // Add Scale Bar to Map
         L.control.scale({ position: 'bottomleft' }).addTo(map);
