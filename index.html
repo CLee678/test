@@ -111,8 +111,13 @@
                 chart.properties.Perc_Reloc
             ];
 
-            // Update the popup content
-            survey.bindPopup('The Number of Completed Surveys: ' + chart.properties.No_Surveys).openPopup();
+
+            // Update the popup content to include Neighborhood Name and Number of Surveys
+            survey.bindPopup(
+                'Neighborhood: ' + chart.properties.NOMBRE + '<br>' +
+                'The Number of Completed Surveys: ' + chart.properties.No_Surveys
+            ).openPopup();
+
 
             // Update the chart
             var chartContainer = document.getElementById('chart-container');
@@ -134,13 +139,9 @@
                         backgroundColor: [
                             'rgba(54, 162, 235, 0.7)',
                             'rgba(54, 162, 235, 0.7)',
-                            'rgba(54, 162, 235, 0.7)',
-                            'rgba(54, 162, 235, 0.7)',
                             'rgba(54, 162, 235, 0.7)'
                         ],
                         borderColor: [
-                            'rgba(54, 162, 235, 0.7)',
-                            'rgba(54, 162, 235, 0.7)',
                             'rgba(54, 162, 235, 0.7)',
                             'rgba(54, 162, 235, 0.7)',
                             'rgba(54, 162, 235, 0.7)'
