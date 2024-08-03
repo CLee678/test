@@ -186,17 +186,6 @@
             map.fitBounds(e.target.getBounds().pad(1.5));
         }
 
-        // Set style function that sets fill color property equal to census tract      
-        function styleFunc(feature) {
-            return {
-                fillColor: setColorFunc(feature.properties.No_Surveys),
-                fillOpacity: 0.9,
-                weight: 1,
-                opacity: 1,
-                color: '#ffffff',
-                dashArray: '3'
-            };
-        }
 
         // Add Scale Bar to Map
         L.control.scale({ position: 'bottomleft' }).addTo(map);
