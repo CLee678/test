@@ -2,7 +2,7 @@
 <html>
 <head>
     <meta charset="utf-8">
-    <title>Puerto Rico</title>
+    <title>Playa de Ponce</title>
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.0.3/dist/leaflet.css"/>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <style>        
@@ -19,7 +19,7 @@
         height: 100%;
     }
 
-    .info {             /* Style of tittle box */
+    .info {             /* Style of title box */
         z-index: 1000;
         position: absolute;
         top: 3%;
@@ -33,7 +33,7 @@
         border-radius: 10px;
     }
 
-    .info h1 {          /* Tittle wording */
+    .info h1 {          /* Title wording */
         font-size: 23px;
         margin: 0 0 5px;
         color: black;
@@ -61,47 +61,16 @@
         color: black;
     }
 
-    .legend {               /* Legend background box */
-        line-height: 17px;
-        color: #333333;
-        font-family: 'Open Sans', Helvetica, sans-serif;
-        padding: 6px 8px;
-        background: white;
-        background: rgba(255, 255, 255, 0.8);
-        box-shadow: 0 0 15px rgba(0, 0, 0, 0.2);
-        border-radius: 5px;
-        width: 110px; 
-    }
-
-    .legend b {         /* Legend head "Population" */
-            font-weight: normal;
-            font-size: 15px
-        }
-
-    .legend i {         /* Legend color boxes */
-        width: 28px;
-        height: 18px;
-        float: left;
-        margin-right: 8px;
-        opacity: 0.7;
-    }
-
-    .legend p {     /* Legend interval number */
-        font-size: 12px;
-        line-height: 18px;
-        margin: 0;
-    }
-
     </style>
 </head>
 <body>
     <div class="info">
-        <h1>Relocation of Puerto Rico</h1>
+        <h1>Household Survey in Barrio Playa, Puerto Rico</h1>
     </div>
 
     <div id="chart-container" class="infochart" style="display: none;">
-        <h1>Survey</h1>
-        <canvas id="race-chart"></canvas>
+        <h1>Relocation Willingness</h1>
+        <canvas id="perc-chart"></canvas>
     </div>
 
     <!-- Our web map and content will go here -->
@@ -109,59 +78,57 @@
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
     <div id="map"></div>
     <script>
-        var map = L.map('map', { center: [18, -66.6240], zoom: 13 });
+        var map = L.map('map', { center: [17.985, -66.6240], zoom: 14 });
         L.tileLayer('https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png', { attribution: '© OpenStreetMap' }).addTo(map);
         map.doubleClickZoom.disable();
 
         // Global variables
-        var censusTractLayer;
-        var raceChart;
+        var neighborhoodLayer;
+        var percChart;
 
         // Load GeoJSON from an external file
-        $.getJSON("data/SECTORES_URB_COMUNIDADES.geojson", function (data) {
-            censusTractLayer = L.geoJson(data, {
+        $.getJSON("data/SurveyNeighborhoods.geojson", function (data) {
+            neighborhoodLayer = L.geoJson(data, {
                 style: styleFunc,
                 onEachFeature: onEachFeatureFunc
             }).addTo(map);
         });
 
-        function onEachFeatureFunc(chart, population) {
-            population.on({
+        function onEachFeatureFunc(chart, survey) {
+            survey.on({
                 mouseover: highlightFeature,
                 mouseout: resetHighlight,
                 click: function (e) {
                     zoomFeature(e);
-                    showRaceChartAndPopup(chart, population);
+                    showPercChartAndPopup(chart, survey);
                 }
             });
         }
 
-        function showRaceChartAndPopup(chart, population) {
+        function showPercChartAndPopup(chart, survey) {
             var raceData = [
-                chart.properties.PERCENT_WHITE_NH,
-                chart.properties.PERCENT_BLACK_NH,
-                chart.properties.PERCENT_ASIAN_PI_NH,
-                chart.properties.PERCENT_HISPANIC,
-                chart.properties.PERCENT_MULTIRACIAL_NH
+                chart.properties.Perc_NotWi,
+                chart.properties.Perc_Willi,
+                chart.properties.Perc_Reloc
             ];
 
             // Update the popup content
-            population.bindPopup('Population: ' + chart.properties.COUNT_ALL_RACES_ETHNICITIES).openPopup();
+            survey.bindPopup('The Number of Completed Surveys: ' + chart.properties.No_Surveys).openPopup();
 
             // Update the chart
             var chartContainer = document.getElementById('chart-container');
-            var raceChartCanvas = document.getElementById('race-chart');
+            var percChartCanvas = document.getElementById('perc-chart');
             chartContainer.style.display = 'block';
 
             // Destroy the previous chart instance if it exists
-            if (raceChart) {
-                raceChart.destroy();
+            if (percChart) {
+                percChart.destroy();
             }
 
-            raceChart = new Chart(raceChartCanvas, {
+            percChart = new Chart(percChartCanvas, {
                 type: 'bar',
                 data: {
-                    labels: ['White', 'Black', 'Asian', 'Hispanic', 'Multiracial'],
+                    labels: ['No', 'Yes', 'Yes but within Barrio'],
                     datasets: [{
                         label: 'Percentage %',
                         data: raceData,
@@ -210,7 +177,7 @@
 
         // Define what happens on mouseout
         function resetHighlight(e) {
-            censusTractLayer.resetStyle(e.target);
+            neighborhoodLayer.resetStyle(e.target);
         }
 
         // As an additional touch, let’s define a click listener that zooms to the state: 
@@ -222,7 +189,7 @@
         // Set style function that sets fill color property equal to census tract      
         function styleFunc(feature) {
             return {
-                fillColor: setColorFunc(feature.properties.COUNT_ALL_RACES_ETHNICITIES),
+                fillColor: setColorFunc(feature.properties.No_Surveys),
                 fillOpacity: 0.9,
                 weight: 1,
                 opacity: 1,
@@ -231,37 +198,10 @@
             };
         }
 
-        // Set function for color ramp
-        function setColorFunc(density) {
-            return density > 8000 ? '#67001f' :
-                density > 6000 ? '#b2182b' :
-                density > 4000 ? '#d6604d' :
-                density > 2000 ? '#f4a582' :
-                density > 0 ? '#fddbc7' :
-                                '#3d3b3a';
-        }
-
         // Add Scale Bar to Map
         L.control.scale({ position: 'bottomleft' }).addTo(map);
 
-        var legend = L.control({ position: 'bottomright' });
 
-        legend.onAdd = function (map) {
-            var div = L.DomUtil.create('div', 'legend');
-            div.innerHTML += '<b>Population</b><br />';
-            div.innerHTML += 'by Census Tract<br />';
-            div.innerHTML += '<br>';
-            div.innerHTML += '<i style="background: #67001f"></i><p>8000+</p>';
-            div.innerHTML += '<i style="background: #b2182b"></i><p>6000 - 8000</p>';
-            div.innerHTML += '<i style="background: #d6604d"></i><p>4000 - 6000</p>';
-            div.innerHTML += '<i style="background: #f4a582"></i><p>2000 - 4000</p>';
-            div.innerHTML += '<i style="background: #fddbc7"></i><p>0 - 2000</p>';
-            div.innerHTML += '<hr>';
-            div.innerHTML += '<i style="background: #3d3b3a"></i><p>No Data</p>';
-            return div;
-        };
-
-        legend.addTo(map);
     </script>
 </body>
 </html>
