@@ -89,7 +89,6 @@
         // Load GeoJSON from an external file
         $.getJSON("data/SurveyNeighborhoods.geojson", function (data) {
             neighborhoodLayer = L.geoJson(data, {
-                style: styleFunc,
                 onEachFeature: onEachFeatureFunc
             }).addTo(map);
         });
