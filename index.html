@@ -1,236 +1,80 @@
-<!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-    <meta charset="utf-8">
-    <title>Playa de Ponce</title>
-    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.0.3/dist/leaflet.css"/>
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    <style>        
-    html { height:100%;}
-    body {
-        height:100%;
-        padding: 0;
-        margin: 0;
-    }
-
-    #map {
-        width: 100%;
-        margin: 0 auto;
-        height: 100%;
-    }
-
-    .info {             /* Style of title box */
-        z-index: 1000;
-        position: absolute;
-        top: 3%;
-        left: 5%; 
-        padding: 10px 15px;
-        font: 14px Arial, Helvetica, sans-serif;
-        text-align: center;
-        background: white;
-        background: rgba(255, 255, 255, 0.8);
-        box-shadow: 0 0 15px rgba(0, 0, 0, 0.2);
-        border-radius: 10px;
-    }
-
-    .info h1 {          /* Title wording */
-        font-size: 25px;
-        margin: 0 0 5px;
-        color: black;
-        font-weight: bold;
-    }
-
-    .infochart {        /* Style of the chart */
-        z-index: 1000;
-        position: absolute;
-        top: 4%;
-        right: 1%; 
-        padding: 12px 18px;
-        width: 400px;
-        font: 14px Arial, Helvetica, sans-serif;
-        text-align: center;
-        background: white;
-        background: rgba(255, 255, 255, 0.8);
-        box-shadow: 0 0 15px rgba(0, 0, 0, 0.2);
-        border-radius: 10px;
-    }
-
-    .infochart h1 {     /* Tittle of the chart */
-        font-size: 18px;
-        margin: 0 0 5px;
-        color: black;
-    }
-
-    </style>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=This is Cayley, initial-scale=1.0">
+    <title>Document</title>
 </head>
+
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.0.3/dist/leaflet.css"/>
+
 <body>
-    <div class="info">
-        <h1>Household Survey in Barrio Playa, Puerto Rico</h1>
-    </div>
-
-    <div id="chart-container" class="infochart" style="display: none;">
-        <h1>Relocation Willingness</h1>
-        <canvas id="perc-chart"></canvas>
-    </div>
-
-    <!-- Our web map and content will go here -->
+    <h1>
+    My First Interactive Map - Planned Route Map
+    </h1>
+  
     <script src="https://unpkg.com/leaflet@1.0.3/dist/leaflet.js"></script>
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
-    <div id="map"></div>
-    <script>
-        var map = L.map('map', { center: [17.985, -66.62], zoom: 14 });
-        L.tileLayer('https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png', { attribution: '© OpenStreetMap' }).addTo(map);
-        map.doubleClickZoom.disable();
 
-        // Global variables
-        var neighborhoodLayer;
-        var percChart;
+    <div id="mapmark" style="width: 1000px; height: 600px"></div>
 
-        // Load GeoJSON from an external file
-        $.getJSON("data/SurveyNeighborhoods.geojson", function (data) {
-            neighborhoodLayer = L.geoJson(data, {
-                style: styleFunc,
-                onEachFeature: onEachFeatureFunc
-            }).addTo(map);
-        });
+<script>
+    var map = L.map('mapmark', {center: [39.981192, -75.155399], zoom: 11}); // create a map instance with center of Temple University
+    L.tileLayer('https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png', { attribution: '© OpenStreetMap' }).addTo(map);
+    map.doubleClickZoom.disable(); // disable the double click to zoom in
 
+// add point marker
+var myDataPoint = L.marker([39.981586, -75.149515]).addTo(map);
+myDataPoint.bindPopup("This is Temple University.");
+myDataPoint.bindPopup("<h3>Temple University</h3><p>Philadelphia, PA<br>Information about Temple University.</p>");
 
-        function onEachFeatureFunc(chart, survey) {
-            survey.on({
-                mouseover: highlightFeature,
-                mouseout: resetHighlight,
-                click: function (e) {
-                    zoomFeature(e);
-                    showPercChartAndPopup(chart, survey);
-                }
-            });
-        }
+var myDataPoint = L.marker([39.9773784468704, -75.1576050959517]).addTo(map);
+myDataPoint.bindPopup("Fresh Grocer");
 
-        function showPercChartAndPopup(chart, survey) {
-            var raceData = [
-                chart.properties.Perc_NotWi,
-                chart.properties.Perc_Willi,
-                chart.properties.Perc_Reloc
-            ];
+var myDataPoint = L.marker([39.96568300923932, -75.15001239939551]).addTo(map);
+myDataPoint.bindPopup("Edgar Allan Pоe National Historic Site");
 
+var myDataPoint = L.marker([39.95390424947187, -75.14262707360804]).addTo(map);
+myDataPoint.bindPopup("Elfreth Alley Museum");
 
-            // Update the popup content to include Neighborhood Name and Number of Surveys
-            survey.bindPopup(
-                'Neighborhood: ' + chart.properties.NOMBRE + '<br>' +
-                'The Number of Completed Surveys: ' + chart.properties.No_Surveys
-            ).openPopup();
+var myDataPoint = L.marker([39.95235168877071, -75.16360953733336]).addTo(map);
+myDataPoint.bindPopup("Philadelphia City Hall");
 
+// create a polyline
+var myDataLine = L.polyline([[39.981586, -75.149515], 
+				[39.9773784468704, -75.1576050959517],
+				[39.96568300923932, -75.15001239939551],
+				[39.95390424947187, -75.14262707360804],
+				[39.95235168877071, -75.16360953733336]
+				],
+			    {color: 'red', weight: 5}).addTo(map);
 
-            // Update the chart
-            var chartContainer = document.getElementById('chart-container');
-            var percChartCanvas = document.getElementById('perc-chart');
-            chartContainer.style.display = 'block';
+// Bind popup to line object
+myDataLine.bindPopup("Chestnut Line");
 
-            // Destroy the previous chart instance if it exists
-            if (percChart) {
-                percChart.destroy();
-            }
+// create a polygon of Philadelphia metro
+var myArea = L.polygon([[40.134261, -75.270050],
+			 [40.138132, -74.888837],
+			 [39.873212, -74.988837],
+			 [39.859046, -75.377775]
+			 ],
+   			 {color: 'blue', weight: 1}).addTo(map);
+   			 
+// Bind popup to area object
+myArea.bindPopup("Philadelphia metro");
 
-            percChart = new Chart(percChartCanvas, {
-                type: 'bar',
-                data: {
-                    labels: ['No', 'Yes', 'Yes but within Barrio'],
-                    datasets: [{
-                        label: 'Percentage %',
-                        data: raceData,
-                        backgroundColor: [
-                            'rgba(54, 162, 235, 0.7)',
-                            'rgba(54, 162, 235, 0.7)',
-                            'rgba(14, 93, 147, 0.7)'
-                        ],
-                        borderColor: [
-                            'rgba(54, 162, 235, 0.7)',
-                            'rgba(54, 162, 235, 0.7)',
-                            'rgba(14, 93, 147, 0.7)'
-                        ],
-                        borderWidth: 1
-                    }]
-                },
-                options: {
-                    scales: {
-                        y: {
-                            beginAtZero: true
-                        }
-                    }
-                }
-            });
-        }
+// load GeoJSON from an external file
+$.getJSON("lead.geojson",function(data){
+    // add GeoJSON layer to the map once the file is loaded
+    L.geoJson(data, {
+    	onEachFeature: function(feature, layer){
+    		layer.bindPopup('Blood lead level: '+feature.properties.perc_5plus);
+    	}
+    }).addTo(map);
+});
 
-        function highlightFeature(e) {
-            var layer = e.target;
-
-            layer.setStyle({
-                weight: 5,
-                color: '#666',
-                dashArray: '',
-                fillOpacity: 0.7
-            });
-
-            // For different web browsers
-            if (!L.Browser.ie && !L.Browser.opera && !L.Browser.edge) {
-                layer.bringToFront();
-            }
-        }
-
-        // Define what happens on mouseout
-        function resetHighlight(e) {
-            neighborhoodLayer.resetStyle(e.target);
-        }
-
-        // As an additional touch, let’s define a click listener that zooms to the state: 
-        function zoomFeature(e) {
-            console.log(e.target.getBounds());
-            map.fitBounds(e.target.getBounds().pad(1.5));
-        }
-
-        // Set style function that sets fill color property equal to census tract      
-        function styleFunc(feature) {
-            return {
-                fillColor: setColorFunc(feature.properties.NOMBRE),
-                fillOpacity: 0.9,
-                weight: 1,
-                opacity: 1,
-                color: '#f44336',
-                dashArray: '3'
-            };
-        }
+</script>
 
 
-        function setColorFunc(name) {
-            switch(name) {
-                case 'AMALIA MARIN':
-                    return '#cfe2f3';
-                case 'LOS MEROS':
-                    return '#fff2cc';
-                case 'LOS POTES':
-                    return '#a2c4c9';
-                case 'PLAYA':
-                    return '#d9d2e9';
-                case 'PUERTO VIEJO':
-                    return '#8fce00';
-                case 'SALISTRAL / SECT PLAYA':
-                    return '#d9ead3';
-                case 'VILLA PESQUERA':
-                    return '#3d85c6';
-                case 'VILLA TABAIBA':
-                    return '#fddbc7';
-                case 'VISTAS DEL MAR':
-                    return '#ead1dc';
-                default:
-                    return '#ffffff'; // Default color if name does not match
-            }
-        }
-     
-
-        // Add Scale Bar to Map
-        L.control.scale({ position: 'bottomleft' }).addTo(map);
-
-
-    </script>
 </body>
 </html>
